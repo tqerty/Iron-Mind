@@ -1,0 +1,20 @@
+from flask import Flask, render_template
+
+def create_app():
+    app = Flask(__name__)
+
+    @app.route("/")
+    def index():
+        return render_template('index.html')
+
+
+
+        
+    app.run(debug = True)
+
+
+
+
+
+#тут подключить фласк и сделать базовый маршурт на запуск стартовой страницы индекс хтмл,
+#  в папке теплейтс сосздать индекс файл функция креате_апп
