@@ -3,12 +3,43 @@
 }
 
 body{
-    background-color:rgb(221, 186, 46);
+    background-color: #1a1a1a;
+    
 }
 
 h1{
     text-align: center;
     padding-top: 3%;
+    color: white;
 }
 
+p{
+    color: white;
+    margin-left: 5%;
+    margin-top: 3%;
+}
 
+h2{
+    color: white;
+    margin-left: 5%;
+    margin-top: 3%;
+}
+
+article{
+    color: white;
+    background-color:grey;
+    border-radius: 10px;
+    width: 60%;
+    margin: 10%;
+}
+
+label{
+    color:white;
+    
+}
+
+form{display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: flex-start;
+  padding-left: 10%;}
