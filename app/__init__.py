@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request
 from database.security import secure
-from database.logic_db import create_table, insert_user
-
+from database.logic_db import create_table, insert_user, check_user
+from .checking import check_data
 
 def create_app():
     app = Flask(__name__)
@@ -21,10 +21,22 @@ def create_app():
         login = request.form['login']
         password = request.form['password']
         password = secure(password)
+        if check_data(name, login, password) == True:
+            return render_template('errors.html', problem = 'Проверьте, пожалуйста, длину вашего логина (4 символа и более), длину пароля (8 символов и более) и ваше имя (не должен быть пустым)')
+        elif check_user(login):
+            return render_template('errors.html', problem = 'Логин занят')
+
         insert_user(name, login, password)
         return "Регистрация прошла успешно!"
     
-    app.run(debug = True)
+    @app.errorhandler(404)
+    def not_found_error(error):
+        return render_template('404.html'), 404
+    
+    @app.route('/error')
+    def erors():
+        return render_template('errors.html')
+    return app 
 
 
 

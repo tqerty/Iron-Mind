@@ -20,4 +20,16 @@ def insert_user(name, login, password):
     con.commit()
     con.close()
 
+def check_user(user):
+    con = sqlite3.connect("users.db")
+    cur = con.cursor()
+    result = cur.execute('''SELECT * FROM users where login = ? ''', (user,)).fetchone()
+    con.commit()
+    con.close()
+    if result:
+        return True
+    else:
+        return False
 
+if __name__ == '__main__':
+    check_user('tqerty')
