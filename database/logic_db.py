@@ -31,5 +31,12 @@ def check_user(user):
     else:
         return False
 
-if __name__ == '__main__':
-    check_user('tqerty')
+def check_l_p(login, password):
+    con = sqlite3.connect("users.db")
+    cur = con.cursor()
+    result = cur.execute('''SELECT * FROM users where login = ? AND password = ?''', (login, password)).fetchone()
+    con.close()
+    if result:
+        return True
+    else:
+        return False
