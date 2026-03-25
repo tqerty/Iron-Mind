@@ -20,12 +20,11 @@ def create_app():
         name = request.form['name']
         login = request.form['login']
         password = request.form['password']
-        password = secure(password)
         if check_data(name, login, password) == True:
             return render_template('errors.html', problem = 'Проверьте, пожалуйста, длину вашего логина (4 символа и более), длину пароля (8 символов и более) и ваше имя (не должен быть пустым)')
         elif check_user(login):
             return render_template('errors.html', problem = 'Логин занят')
-
+        password = secure(password)
         insert_user(name, login, password)
         return "Регистрация прошла успешно!"
     
