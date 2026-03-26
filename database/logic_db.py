@@ -40,3 +40,13 @@ def check_l_p(login, password):
         return True
     else:
         return False
+    
+def get_name(login):
+    con = sqlite3.connect('users.db')
+    cur = con.cursor()
+    result = cur.execute('''SELECT name FROM users where login = ?''', (login,)).fetchone()
+    if result is None:
+        return 'Ошибочка'
+    return result[0]
+
+

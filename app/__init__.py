@@ -1,12 +1,13 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session
 from database.security import secure
-from database.logic_db import create_table, insert_user, check_user, check_l_p
+from database.logic_db import create_table, insert_user, check_user, check_l_p, get_name
 from .checking import check_data
+import hashlib
 
 def create_app():
     app = Flask(__name__)
     create_table()
-
+    app.secret_key = f'{hashlib.md5('salt'.encode())}'
     @app.route("/")
     def index():
         return render_template('index.html')
@@ -36,15 +37,23 @@ def create_app():
     def admit():
         return render_template('admit.html')
 
-    @app.route('/autorization', methods=['POST'])
+    @app.route('/autorization', methods=['GET','POST'])
     def autorization():
-        login = request.form['login']
-        password = request.form['password']
-        password = secure(password)
-        if check_l_p(login, password) == True:
-            return render_template('page.html')
+        if request.method == 'POST':
+            
+            login = request.form['login']
+            password = request.form['password']
+            password = secure(password)
+            if check_l_p(login, password) == True:
+                session['login'] = login
+                return render_template('page.html', name=get_name(session['login']))
+            else:
+                return render_template('errors.html', problem = 'Логин и пароль не нашлись')
         else:
-            return render_template('errors.html', problem = 'Логин и пароль не нашлись')
+            if 'login' in session:
+                return render_template('page.html', name=get_name(session['login']))
+            else:
+                return 'У вас нет доступа, авторизуйтесь'
 
     @app.route('/error')
     def erors():
