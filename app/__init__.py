@@ -66,7 +66,7 @@ def create_app():
     #     return ya.gpt(re)
 
     
-    @app.route('/exit', methods = ['GET', 'POST'])
+    @app.route('/exit', methods = ['POST'])
     def exit():
         del session['login']
         return render_template('index.html')
