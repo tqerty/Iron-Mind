@@ -7,6 +7,14 @@
     <title>Основная страница</title>
 </head>
 <body>
-    <h1>Основное</h1>
+    <h1>Добро пожаловать, {{name}}!</h1>
+    <form action="/exit" method="post">
+        <button type="submit">Выйти из профиля</button>
+    </form>
+    
+    <form action="/response">
+        <label for="responsible"></label>
+        <input type="text" name="responsible" placeholder="Введите вашу проблему">
+    </form>
 </body>
 </html>
