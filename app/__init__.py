@@ -3,7 +3,7 @@ from database.security import secure
 from database.logic_db import create_table, insert_user, check_user, check_l_p, get_name
 from .checking import check_data
 import hashlib
-# import ya, config
+from app import ai
 
 def create_app():
     app = Flask(__name__)
@@ -60,10 +60,12 @@ def create_app():
     def erors():
         return render_template('errors.html')
     
-    # @app.route('/response', methods=['GET','POST'])
-    # def response():
-    #     re = request.form['responsible']
-    #     return ya.gpt(re)
+    @app.route('/response', methods=['POST'])
+    def response():
+        re = request.form['responsible']
+        result = ai.gpt(re, session['login'])
+        print(result)
+        return render_template('page.html', response=result, name=get_name(session['login']))
 
     
     @app.route('/exit', methods = ['POST'])
