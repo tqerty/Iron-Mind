@@ -1,13 +1,15 @@
 from flask import Flask, render_template, request, session
 from database.security import secure
-from database.logic_db import create_table, insert_user, check_user, check_l_p, get_name
+from database.logic_db import create_tables, insert_user, check_user, check_l_p, get_name, insert_data, get_data
 from .checking import check_data
 import hashlib
 from app import ai
+import asyncio 
+
 
 def create_app():
     app = Flask(__name__)
-    create_table()
+    create_tables()
     app.secret_key = f'{hashlib.md5('salt'.encode())}'
     @app.route("/")
     def index():
@@ -61,10 +63,9 @@ def create_app():
         return render_template('errors.html')
     
     @app.route('/response', methods=['POST'])
-    def response():
+    async def response():
         re = request.form['responsible']
-        result = ai.gpt(re, session['login'])
-        print(result)
+        result = await ai.gpt_io(re, session['login'])
         return render_template('page.html', response=result, name=get_name(session['login']))
 
     

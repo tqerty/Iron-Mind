@@ -1,6 +1,6 @@
 import sqlite3
 
-def create_table():
+def create_tables():
     con = sqlite3.connect("users.db")
     cur = con.cursor()
     cur.execute('''CREATE TABLE IF NOT EXISTS users(
@@ -8,6 +8,12 @@ def create_table():
                 name TEXT, 
                 login TEXT,
                 password TEXT)''')
+    cur.execute('''CREATE TABLE IF NOT EXISTS data(
+                id INTEGER PRIMARY KEY AUTOINCREMENT, 
+                login TEXT,
+                role TEXT,
+                answer TEXT
+                )''')
     con.commit()
     con.close()
 
@@ -19,6 +25,30 @@ def insert_user(name, login, password):
 ''', data)
     con.commit()
     con.close()
+
+def insert_data(login, role, answer):
+    con = sqlite3.connect("users.db")
+    cur = con.cursor()
+    values = (login, role, answer)
+    cur.execute('''INSERT INTO data(login, role, answer) VALUES (?, ?, ?)
+''', values)
+    con.commit()
+    con.close()
+
+def get_data(login):
+    con = sqlite3.connect('users.db')
+    cur = con.cursor()
+    result = cur.execute('''SELECT role, answer FROM data where login = ?''', (login,)).fetchall()
+    if result is None:
+        return 'Ошибочка'
+    ls = []
+    for role, answer in result:
+        ls.append({'role': role, 'text': answer})
+    return ls
+
+
+
+
 
 def check_user(user):
     con = sqlite3.connect("users.db")
@@ -49,4 +79,5 @@ def get_name(login):
         return 'Ошибочка'
     return result[0]
 
-
+if __name__ == '__main__':
+    create_tables()

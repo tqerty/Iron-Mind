@@ -1,5 +1,7 @@
 import requests
 import app.config
+import asyncio
+from database.logic_db import insert_data, get_data
 
 memories = {
 
@@ -18,7 +20,7 @@ memory = [
 
 def gpt(text, login):
     if login not in memories:
-        memories[login] = memory.copy()
+        memories[login] = load_history(login)
 
     memories[login].append(
         {
@@ -26,6 +28,8 @@ def gpt(text, login):
             "text": text
         }
     )
+
+    insert_data(login, 'user', text)
 
     prompt = {
         "modelUri": f"gpt://{app.config.id_ya}/yandexgpt",
@@ -46,10 +50,23 @@ def gpt(text, login):
     
     response = requests.post(url, headers=headers, json=prompt)
     result = response.json().get('result')
+    ai_answer = result['alternatives'][0]['message']['text']
     memories[login].append(
         {
             'role':'assistant',
-            'text': result['alternatives'][0]['message']['text']
+            'text': ai_answer
         }
     )
-    return result['alternatives'][0]['message']['text']
+    insert_data(login, 'assistant', ai_answer)
+
+
+
+    return ai_answer
+
+async def gpt_io(text, login):
+    return await asyncio.to_thread(gpt, text, login)
+
+def load_history(login):
+    history = memory.copy()
+    history.extend(get_data(login))
+    return history
