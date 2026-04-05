@@ -13,7 +13,9 @@
     </form>
     
     <div class = 'res'>
-        {{response}}
+        {% for text in info %}
+        <p>{{ text.text }}</p>
+        {% endfor %}
     </div>
     <form action="/response" method="post">
         <label for="responsible"></label>

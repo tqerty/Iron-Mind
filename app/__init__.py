@@ -1,16 +1,16 @@
 from flask import Flask, render_template, request, session
 from database.security import secure
-from database.logic_db import create_tables, insert_user, check_user, check_l_p, get_name, insert_data, get_data
+from database.logic_db import create_tables, insert_user, check_user, check_l_p, get_name
 from .checking import check_data
 import hashlib
 from app import ai
-import asyncio 
+from app.ai import load_history
 
 
 def create_app():
     app = Flask(__name__)
     create_tables()
-    app.secret_key = f'{hashlib.md5('salt'.encode())}'
+    app.secret_key = hashlib.md5(b"salt").hexdigest()
     @app.route("/")
     def index():
         return render_template('index.html')
@@ -49,12 +49,13 @@ def create_app():
             password = secure(password)
             if check_l_p(login, password) == True:
                 session['login'] = login
-                return render_template('page.html', name=get_name(session['login']))
+                info = load_history(login)
+                return render_template('page.html', name=get_name(login), info=info)
             else:
                 return render_template('errors.html', problem = 'Логин и пароль не нашлись')
         else:
             if 'login' in session:
-                return render_template('page.html', name=get_name(session['login']))
+                return render_template('page.html', name=get_name(session['login']), info=load_history(session['login']))
             else:
                 return 'У вас нет доступа, авторизуйтесь'
 
@@ -64,9 +65,16 @@ def create_app():
     
     @app.route('/response', methods=['POST'])
     async def response():
+        if 'login' not in session:
+            return 'У вас нет доступа, авторизуйтесь', 401
         re = request.form['responsible']
-        result = await ai.gpt_io(re, session['login'])
-        return render_template('page.html', response=result, name=get_name(session['login']))
+        login = session['login']
+        await ai.gpt_io(re, login)
+        return render_template(
+            'page.html',
+            name=get_name(login),
+            info=load_history(login),
+        )
 
     
     @app.route('/exit', methods = ['POST'])
