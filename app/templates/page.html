@@ -14,7 +14,14 @@
     
     <div class = 'res'>
         {% for text in info %}
-        <p>{{ text.text }}</p>
+        <div class="msg {{ text.role }}">
+            {% if text.role == 'user' %}
+            <div class="author">Вы ({{ name }})</div>
+            {% else %}
+            <div class="author">ИИ-психолог</div>
+            {% endif %}
+            <p>{{ text.text }}</p>
+        </div>
         {% endfor %}
     </div>
     <form action="/response" method="post">

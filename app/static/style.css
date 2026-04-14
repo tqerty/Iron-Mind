@@ -336,3 +336,32 @@ form[action="/response"] button {
     padding-left: 10%;
     padding-right: 10%;
 }
+
+.msg {
+    margin: 0.8rem 0;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--border);
+}
+
+.msg.user {
+    background: rgba(61, 158, 255, 0.14);
+    text-align: right;
+}
+
+.msg.assistant {
+    background: rgba(255, 255, 255, 0.06);
+    text-align: left;
+}
+
+.msg p {
+    margin: 0;
+    max-width: none;
+}
+
+.author {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+    margin-bottom: 0.35rem;
+    letter-spacing: 0.01em;
+}
