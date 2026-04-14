@@ -70,3 +70,8 @@ def load_history(login):
     history = memory.copy()
     history.extend(get_data(login))
     return history
+
+def load_messages(login):
+    history = load_history(login)
+    history.pop(0)
+    return history

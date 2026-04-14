@@ -1,3 +1,4 @@
 app/config.py
 users.db
 *.pyc
+users.db

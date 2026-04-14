@@ -1,10 +1,10 @@
 from flask import Flask, render_template, request, session
-from database.security import secure
-from database.logic_db import create_tables, insert_user, check_user, check_l_p, get_name
+from database.security import secure, check_password
+from database.logic_db import create_tables, insert_user, check_user, get_hash, get_name
 from .checking import check_data
 import hashlib
 from app import ai
-from app.ai import load_history
+from app.ai import load_messages
 
 
 def create_app():
@@ -43,19 +43,18 @@ def create_app():
     @app.route('/autorization', methods=['GET','POST'])
     def autorization():
         if request.method == 'POST':
-            
             login = request.form['login']
             password = request.form['password']
-            password = secure(password)
-            if check_l_p(login, password) == True:
+            hash = get_hash(login)
+            if hash != None and check_password(password, hash):
                 session['login'] = login
-                info = load_history(login)
+                info = load_messages(login)
                 return render_template('page.html', name=get_name(login), info=info)
             else:
                 return render_template('errors.html', problem = 'Логин и пароль не нашлись')
         else:
             if 'login' in session:
-                return render_template('page.html', name=get_name(session['login']), info=load_history(session['login']))
+                return render_template('page.html', name=get_name(session['login']), info=load_messages(session['login']))
             else:
                 return 'У вас нет доступа, авторизуйтесь'
 
@@ -73,7 +72,7 @@ def create_app():
         return render_template(
             'page.html',
             name=get_name(login),
-            info=load_history(login),
+            info=load_messages(login)
         )
 
     

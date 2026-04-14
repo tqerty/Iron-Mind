@@ -61,15 +61,14 @@ def check_user(user):
     else:
         return False
 
-def check_l_p(login, password):
+def get_hash(login):
     con = sqlite3.connect("users.db")
     cur = con.cursor()
-    result = cur.execute('''SELECT * FROM users where login = ? AND password = ?''', (login, password)).fetchone()
+    result = cur.execute('''SELECT password FROM users where login = ?''', (login,)).fetchone()
     con.close()
-    if result:
-        return True
-    else:
-        return False
+    if result == None:
+        return None 
+    return result[0]
     
 def get_name(login):
     con = sqlite3.connect('users.db')
