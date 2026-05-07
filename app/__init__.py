@@ -80,9 +80,8 @@ def create_app():
     def exit():
         del session['login']
         return render_template('index.html')
-    return app 
+    return app
 
 
-
-
+app = create_app()
 
