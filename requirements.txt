@@ -1,5 +1,5 @@
 aiohttp==3.13.3
-Flask==3.1.2
+Flask[async]==3.1.2
 Flask-Login==0.6.3
 Jinja2==3.1.6
 pipenv==2026.0.3
