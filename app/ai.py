@@ -3,6 +3,12 @@ import app.config
 import asyncio
 from database.logic_db import insert_data, get_data
 
+YANDEX_GPT_TIMEOUT = (5, 60)
+AI_FALLBACK_MESSAGE = (
+    "Сейчас не получилось получить ответ от ИИ-сервиса. "
+    "Попробуйте отправить сообщение еще раз чуть позже."
+)
+
 memories = {
 
 }
@@ -48,9 +54,19 @@ def gpt(text, login):
         "Authorization": f"Api-Key {app.config.key_ya}"
     }
     
-    response = requests.post(url, headers=headers, json=prompt)
-    result = response.json().get('result')
-    ai_answer = result['alternatives'][0]['message']['text']
+    try:
+        response = requests.post(
+            url,
+            headers=headers,
+            json=prompt,
+            timeout=YANDEX_GPT_TIMEOUT
+        )
+        response.raise_for_status()
+        result = response.json().get('result')
+        ai_answer = result['alternatives'][0]['message']['text']
+    except (requests.RequestException, ValueError, KeyError, TypeError, IndexError):
+        ai_answer = AI_FALLBACK_MESSAGE
+
     memories[login].append(
         {
             'role':'assistant',

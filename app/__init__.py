@@ -82,6 +82,10 @@ def create_app():
         return render_template('index.html')
     return app
 
+    @app.route('/yandex_e4bf86946a726519')
+    def yandex():
+        return render_template('yandex_e4bf86946a726519.html')
+
 
 app = create_app()
 
